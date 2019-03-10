@@ -1,0 +1,29 @@
+def getout() {
+
+    sh "mkdir /tmp/myclone; cd /tmp/myclone; git clone https://github.com/hyrdeshgangwar/pipeline.git"
+    def result = sh(returnStdout: true, script: 'ls /tmp/myclone/pipeline/versions')
+    sh "rm -rf /tmp/myclone"
+//    def result = cmd.execute().text
+    return result
+}
+
+node {
+
+   properties(
+      [
+          parameters(
+              [choice(choices: getout(),
+                  description: 'Some choice parameter', 
+                  name: 'SOME_CHOICE')]
+          )
+
+      ]
+  )
+}
+
+//node {
+//    stage('Source') {
+//        // Get code from GIthub
+//        sh 'git clone https://github.com/hyrdeshgangwar/pipeline.git'
+//    }
+//}
