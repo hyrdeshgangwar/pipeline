@@ -38,7 +38,7 @@ node {
         
         stage("Append Value") {
             steps {
-                sh "echo ${params.Text} ${params.Version >> /tmp/myrandomfile"
+                sh "echo ${params.Text} ${params.Version} >> /tmp/myrandomfile"
                 }
             }
 		}
