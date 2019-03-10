@@ -25,19 +25,15 @@ node {
   )
   
   stage("Updating Job Config") {
-    steps {
-      script {
-        if ("${params.Update_Job_Config}" == "Yes") {
-          currentBuild.result = 'ABORTED'
-          error('DRY RUN COMPLETED. JOB UPDATED TO LATEST VERSION AND PARAMETERIZED.')
-        }
+    script {
+      if ("${params.Update_Job_Config}" == "Yes") {
+        currentBuild.result = 'ABORTED'
+        error('DRY RUN COMPLETED. JOB UPDATED TO LATEST VERSION AND PARAMETERIZED.')
       }
     }
   }
         
   stage("Append Value") {
-    steps {
-      sh "echo ${params.Text} ${params.Version} >> /tmp/myrandomfile"
-    }
+    sh "echo ${params.Text} ${params.Version} >> /tmp/myrandomfile"
   }
 }
