@@ -1,54 +1,45 @@
 def getout() {
 
-    sh "mkdir /tmp/myclone; cd /tmp/myclone; git clone https://github.com/hyrdeshgangwar/pipeline.git"
-    def result = sh(returnStdout: true, script: 'ls /tmp/myclone/pipeline/versions')
-    sh "rm -rf /tmp/myclone"
+  sh "mkdir /tmp/myclone; cd /tmp/myclone; git clone https://github.com/hyrdeshgangwar/pipeline.git"
+  def result = sh(returnStdout: true, script: 'ls /tmp/myclone/pipeline/versions')
+  sh "rm -rf /tmp/myclone"
 //    def result = cmd.execute().text
-    return result
+  return result
 }
 
 node {
 
-   properties(
-      [
-          parameters(
-              [
-                  choice(name: 'Update_Job_Config', choices:"Yes\nNo", description: "Do you want to do a dry run to update job to latest version and grab parameters?" ),
-                  choice(choices: getout(),
-                    description: 'Select version', 
-                    name: 'Version'),
-                  string(name: 'Text', description: 'Enter random text')
-              ]
-          )
+  properties(
+    [
+      parameters(
+        [
+          choice(name: 'Update_Job_Config', choices:"Yes\nNo", description: "Do you want to do a dry run to update job to latest version and grab parameters?" ),
+          choice(choices: getout(),
+            description: 'Select version', 
+            name: 'Version'),
+          string(name: 'Text', description: 'Enter random text')
+        ]
+      )
 
-      ]
+    ]
   )
   
   stages {
-	    stage("Updating Job Config") {
-            steps {
-                script {
-                    if ("${params.Update_Job_Config}" == "Yes") {
-                        currentBuild.result = 'ABORTED'
-                        error('DRY RUN COMPLETED. JOB UPDATED TO LATEST VERSION AND PARAMETERIZED.')
-                    }
-                }
-            }
-		}
+    stage("Updating Job Config") {
+      steps {
+   	    script {
+          if ("${params.Update_Job_Config}" == "Yes") {
+            currentBuild.result = 'ABORTED'
+            error('DRY RUN COMPLETED. JOB UPDATED TO LATEST VERSION AND PARAMETERIZED.')
+          }
+        }
+      }
+	}
         
-        stage("Append Value") {
-            steps {
-                sh "echo ${params.Text} ${params.Version} >> /tmp/myrandomfile"
-                }
-            }
-		}
+    stage("Append Value") {
+      steps {
+        sh "echo ${params.Text} ${params.Version} >> /tmp/myrandomfile"
+      }
+    }
   }
-
 }
-
-//node {
-//    stage('Source') {
-//        // Get code from GIthub
-//        sh 'git clone https://github.com/hyrdeshgangwar/pipeline.git'
-//    }
-//}
